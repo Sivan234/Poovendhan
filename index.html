@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Siva Kumar | Galaxy Cyber Portfolio</title>
+
+<title>Siva Kumar | Cyberpunk Galaxy Portfolio</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 
@@ -34,22 +35,18 @@ display:flex;
 justify-content:space-between;
 padding:20px 40px;
 border-bottom:1px solid #00ffff;
-background:rgba(0,0,0,0.6);
-}
-
-.logo span{
-color:#ff00ff;
+background:rgba(0,0,0,0.7);
 }
 
 nav a{
-color:#00ffff;
 margin-left:20px;
 text-decoration:none;
+color:#00ffff;
 }
 
 .hero{
 text-align:center;
-padding:150px 20px;
+padding:140px 20px;
 }
 
 section{
@@ -76,37 +73,30 @@ height:100%;
 background:linear-gradient(90deg,#00ffff,#ff00ff);
 }
 
-.card{
+/* Terminal */
+
+.terminal{
+width:80%;
+max-width:700px;
+margin:40px auto;
+background:#000;
 border:1px solid #00ffff;
-padding:30px;
-margin:20px;
-display:inline-block;
-width:200px;
-transition:0.3s;
+padding:20px;
+text-align:left;
 }
 
-.card:hover{
-background:#00ffff;
-color:black;
-transform:scale(1.05);
+.terminal-output{
+height:150px;
+overflow:auto;
+margin-bottom:10px;
 }
 
-input,textarea{
-display:block;
-margin:10px auto;
-padding:10px;
-width:250px;
-background:#111;
-border:1px solid #00ffff;
-color:#00ffff;
-}
-
-button{
-padding:10px 20px;
-background:#00ffff;
+#terminalInput{
+width:100%;
+background:black;
 border:none;
-color:black;
-cursor:pointer;
+color:#00ffff;
+font-family:monospace;
 }
 
 /* Chatbot */
@@ -127,17 +117,16 @@ padding:10px;
 }
 
 .chat-body{
-height:150px;
-overflow-y:auto;
+height:120px;
+overflow:auto;
 padding:10px;
-font-size:14px;
 }
 
 #chatInput{
 width:100%;
 padding:10px;
-border:none;
 background:black;
+border:none;
 color:#00ffff;
 }
 
@@ -149,13 +138,12 @@ color:#00ffff;
 <canvas id="bg"></canvas>
 
 <header>
-<h2 class="logo">Siva<span>Kumar</span></h2>
+<h2>Siva Kumar</h2>
 
 <nav>
 <a href="#home">Home</a>
 <a href="#skills">Skills</a>
-<a href="#projects">Projects</a>
-<a href="#contact">Contact</a>
+<a href="#terminal">Terminal</a>
 </nav>
 </header>
 
@@ -190,26 +178,24 @@ color:#00ffff;
 
 </section>
 
-<section id="projects">
-<h2>Projects</h2>
+<section id="terminal">
 
-<div class="card">Anime Website</div>
-<div class="card">Cyber Security Tool</div>
-<div class="card">Developer Portfolio</div>
+<h2>Hacker Terminal</h2>
 
-</section>
+<div class="terminal">
 
-<section id="contact">
+<div class="terminal-output" id="terminalOutput">
+Type <b>help</b> to see commands.
+</div>
 
-<h2>Contact</h2>
+<input id="terminalInput" placeholder="Enter command...">
 
-<input placeholder="Name">
-<input placeholder="Email">
-<textarea placeholder="Message"></textarea>
-
-<button>Send</button>
+</div>
 
 </section>
+
+
+<!-- Chatbot -->
 
 <div class="chatbot">
 
@@ -221,57 +207,79 @@ color:#00ffff;
 
 </div>
 
+
 <script>
 
-/* Chatbot */
+/* Terminal */
 
-const input=document.getElementById("chatInput");
-const chat=document.getElementById("chatBody");
+const terminalInput=document.getElementById("terminalInput");
+const terminalOutput=document.getElementById("terminalOutput");
 
-input.addEventListener("keypress",function(e){
+terminalInput.addEventListener("keypress",function(e){
 
 if(e.key==="Enter"){
 
-let text=input.value;
+let cmd=terminalInput.value.toLowerCase();
 
-add("You: "+text);
+let response="";
 
-let reply=bot(text);
+if(cmd==="help")
+response="Commands: about, skills, projects, clear";
 
-setTimeout(()=>add("AI: "+reply),500);
+else if(cmd==="about")
+response="Siva Kumar: Cyber Security student and web developer.";
 
-input.value="";
+else if(cmd==="skills")
+response="HTML, CSS, JavaScript, Cyber Security.";
+
+else if(cmd==="projects")
+response="Anime Website, Security Tool, Portfolio.";
+
+else if(cmd==="clear"){
+terminalOutput.innerHTML="";
+terminalInput.value="";
+return;
+}
+
+else
+response="Unknown command.";
+
+terminalOutput.innerHTML+="<br>> "+cmd+"<br>"+response;
+
+terminalInput.value="";
 
 }
 
 });
 
-function add(msg){
 
-let div=document.createElement("div");
-div.textContent=msg;
+/* Chatbot */
 
-chat.appendChild(div);
+const chatInput=document.getElementById("chatInput");
+const chatBody=document.getElementById("chatBody");
 
-chat.scrollTop=chat.scrollHeight;
+chatInput.addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+
+let text=chatInput.value;
+
+let msg=document.createElement("div");
+msg.textContent="You: "+text;
+chatBody.appendChild(msg);
+
+let reply=document.createElement("div");
+reply.textContent="AI: Try using the hacker terminal!";
+chatBody.appendChild(reply);
+
+chatInput.value="";
 
 }
 
-function bot(text){
+});
 
-text=text.toLowerCase();
 
-if(text.includes("hello"))
-return "Hello! Welcome to Siva Kumar's cyber portfolio.";
-
-if(text.includes("skills"))
-return "Siva knows HTML, CSS, JavaScript and Cyber Security.";
-
-return "Ask me about skills or projects.";
-
-}
-
-/* Three.js Galaxy + Planet */
+/* THREE.JS GALAXY */
 
 const scene=new THREE.Scene();
 
@@ -283,17 +291,18 @@ window.innerWidth/window.innerHeight,
 );
 
 const renderer=new THREE.WebGLRenderer({
-canvas:document.querySelector('#bg')
+canvas:document.querySelector("#bg")
 });
 
 renderer.setSize(window.innerWidth,window.innerHeight);
 
-camera.position.z=8;
+camera.position.z=12;
 
 /* Stars */
 
 const starGeo=new THREE.BufferGeometry();
-const starCount=5000;
+
+const starCount=6000;
 
 const posArray=new Float32Array(starCount*3);
 
@@ -314,17 +323,36 @@ const stars=new THREE.Points(starGeo,starMaterial);
 
 scene.add(stars);
 
+
 /* Planet */
 
-const geometry=new THREE.SphereGeometry(2,32,32);
+const planetGeo=new THREE.SphereGeometry(2,32,32);
 
-const material=new THREE.MeshStandardMaterial({
-color:0x2266ff
+const planetMat=new THREE.MeshStandardMaterial({
+color:0x2255ff
 });
 
-const planet=new THREE.Mesh(geometry,material);
+const planet=new THREE.Mesh(planetGeo,planetMat);
+
+planet.position.x=5;
 
 scene.add(planet);
+
+
+/* Spaceship */
+
+const shipGeo=new THREE.ConeGeometry(0.3,1,16);
+
+const shipMat=new THREE.MeshStandardMaterial({
+color:0xff0000
+});
+
+const ship=new THREE.Mesh(shipGeo,shipMat);
+
+ship.position.set(-6,0,0);
+
+scene.add(ship);
+
 
 /* Light */
 
@@ -333,6 +361,7 @@ const light=new THREE.PointLight(0xffffff,1);
 light.position.set(5,5,5);
 
 scene.add(light);
+
 
 /* Animation */
 
@@ -343,6 +372,13 @@ requestAnimationFrame(animate);
 planet.rotation.y+=0.01;
 
 stars.rotation.y+=0.0005;
+
+/* spaceship movement */
+
+ship.position.x+=0.02;
+
+if(ship.position.x>8)
+ship.position.x=-8;
 
 renderer.render(scene,camera);
 
