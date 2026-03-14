@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Siva Kumar | Cyberpunk Portfolio</title>
+<title>Siva Kumar | Galaxy Cyber Portfolio</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 
 <style>
 
@@ -20,7 +22,7 @@ color:#00ffff;
 overflow-x:hidden;
 }
 
-canvas{
+#bg{
 position:fixed;
 top:0;
 left:0;
@@ -32,6 +34,7 @@ display:flex;
 justify-content:space-between;
 padding:20px 40px;
 border-bottom:1px solid #00ffff;
+background:rgba(0,0,0,0.6);
 }
 
 .logo span{
@@ -85,6 +88,7 @@ transition:0.3s;
 .card:hover{
 background:#00ffff;
 color:black;
+transform:scale(1.05);
 }
 
 input,textarea{
@@ -133,7 +137,7 @@ font-size:14px;
 width:100%;
 padding:10px;
 border:none;
-background:#000;
+background:black;
 color:#00ffff;
 }
 
@@ -142,10 +146,9 @@ color:#00ffff;
 
 <body>
 
-<canvas id="matrix"></canvas>
+<canvas id="bg"></canvas>
 
 <header>
-
 <h2 class="logo">Siva<span>Kumar</span></h2>
 
 <nav>
@@ -154,21 +157,16 @@ color:#00ffff;
 <a href="#projects">Projects</a>
 <a href="#contact">Contact</a>
 </nav>
-
 </header>
 
-
-<section id="home" class="hero">
-
-<h1>Cyber Security Developer</h1>
-<p>Ethical Hacker | Web Developer</p>
-
+<section class="hero" id="home">
+<h1>Cyberpunk Developer</h1>
+<p>Ethical Hacker • Web Developer • Cyber Security Student</p>
 </section>
-
 
 <section id="skills">
 
-<h2>My Skills</h2>
+<h2>Skills</h2>
 
 <div class="skill">
 <p>HTML</p>
@@ -192,9 +190,7 @@ color:#00ffff;
 
 </section>
 
-
 <section id="projects">
-
 <h2>Projects</h2>
 
 <div class="card">Anime Website</div>
@@ -203,21 +199,17 @@ color:#00ffff;
 
 </section>
 
-
 <section id="contact">
 
 <h2>Contact</h2>
 
-<input type="text" placeholder="Name">
-<input type="email" placeholder="Email">
+<input placeholder="Name">
+<input placeholder="Email">
 <textarea placeholder="Message"></textarea>
 
 <button>Send</button>
 
 </section>
-
-
-<!-- Chatbot -->
 
 <div class="chatbot">
 
@@ -225,108 +217,138 @@ color:#00ffff;
 
 <div class="chat-body" id="chatBody"></div>
 
-<input id="chatInput" placeholder="Ask something..." />
+<input id="chatInput" placeholder="Ask something...">
 
 </div>
-
 
 <script>
 
 /* Chatbot */
 
-const chatInput=document.getElementById("chatInput");
-const chatBody=document.getElementById("chatBody");
+const input=document.getElementById("chatInput");
+const chat=document.getElementById("chatBody");
 
-chatInput.addEventListener("keypress",function(e){
+input.addEventListener("keypress",function(e){
 
 if(e.key==="Enter"){
 
-let text=chatInput.value;
+let text=input.value;
 
-addMessage("You: "+text);
+add("You: "+text);
 
-let reply=getReply(text);
+let reply=bot(text);
 
-setTimeout(()=>{
-addMessage("AI: "+reply);
-},500);
+setTimeout(()=>add("AI: "+reply),500);
 
-chatInput.value="";
+input.value="";
 
 }
 
 });
 
-function addMessage(msg){
+function add(msg){
 
 let div=document.createElement("div");
 div.textContent=msg;
 
-chatBody.appendChild(div);
+chat.appendChild(div);
 
-chatBody.scrollTop=chatBody.scrollHeight;
+chat.scrollTop=chat.scrollHeight;
 
 }
 
-function getReply(input){
+function bot(text){
 
-input=input.toLowerCase();
+text=text.toLowerCase();
 
-if(input.includes("hello"))
-return "Hello! Welcome to Siva Kumar's portfolio.";
+if(text.includes("hello"))
+return "Hello! Welcome to Siva Kumar's cyber portfolio.";
 
-if(input.includes("skills"))
+if(text.includes("skills"))
 return "Siva knows HTML, CSS, JavaScript and Cyber Security.";
-
-if(input.includes("project"))
-return "You can see the projects in the project section.";
 
 return "Ask me about skills or projects.";
 
 }
 
+/* Three.js Galaxy + Planet */
 
-/* Matrix background */
+const scene=new THREE.Scene();
 
-const canvas=document.getElementById("matrix");
-const ctx=canvas.getContext("2d");
+const camera=new THREE.PerspectiveCamera(
+75,
+window.innerWidth/window.innerHeight,
+0.1,
+1000
+);
 
-canvas.height=window.innerHeight;
-canvas.width=window.innerWidth;
+const renderer=new THREE.WebGLRenderer({
+canvas:document.querySelector('#bg')
+});
 
-const letters="01";
-const fontSize=16;
-const columns=canvas.width/fontSize;
+renderer.setSize(window.innerWidth,window.innerHeight);
 
-const drops=[];
+camera.position.z=8;
 
-for(let x=0;x<columns;x++)
-drops[x]=1;
+/* Stars */
 
-function draw(){
+const starGeo=new THREE.BufferGeometry();
+const starCount=5000;
 
-ctx.fillStyle="rgba(0,0,0,0.05)";
-ctx.fillRect(0,0,canvas.width,canvas.height);
+const posArray=new Float32Array(starCount*3);
 
-ctx.fillStyle="#00ffff";
-ctx.font=fontSize+"px monospace";
+for(let i=0;i<starCount*3;i++){
 
-for(let i=0;i<drops.length;i++){
-
-const text=letters.charAt(Math.floor(Math.random()*letters.length));
-
-ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-
-if(drops[i]*fontSize>canvas.height && Math.random()>0.975)
-drops[i]=0;
-
-drops[i]++;
+posArray[i]=(Math.random()-0.5)*2000;
 
 }
 
+starGeo.setAttribute(
+'position',
+new THREE.BufferAttribute(posArray,3)
+);
+
+const starMaterial=new THREE.PointsMaterial({color:0xffffff});
+
+const stars=new THREE.Points(starGeo,starMaterial);
+
+scene.add(stars);
+
+/* Planet */
+
+const geometry=new THREE.SphereGeometry(2,32,32);
+
+const material=new THREE.MeshStandardMaterial({
+color:0x2266ff
+});
+
+const planet=new THREE.Mesh(geometry,material);
+
+scene.add(planet);
+
+/* Light */
+
+const light=new THREE.PointLight(0xffffff,1);
+
+light.position.set(5,5,5);
+
+scene.add(light);
+
+/* Animation */
+
+function animate(){
+
+requestAnimationFrame(animate);
+
+planet.rotation.y+=0.01;
+
+stars.rotation.y+=0.0005;
+
+renderer.render(scene,camera);
+
 }
 
-setInterval(draw,33);
+animate();
 
 </script>
 
